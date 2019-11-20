@@ -1,0 +1,21 @@
+{
+  "name": "Multistep-checkout",
+  "version": "1",
+  "description": "A SPA that simulates a multiform checkout experience",
+  "main": "server.js",
+  "repository": "https://github.com/Stevejrmc/hrla33-mini-apps-1",
+  "author": "Steve McLaughlin",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-react": "^7.7.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.7.12",
+    "morgan": "^1.9.1",
+    "nodemon": "^2.0.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  }
+}
