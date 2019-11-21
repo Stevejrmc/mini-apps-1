@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const cors = require('cors');
 const PORT = 3000;
 
 // Database Setup
@@ -14,7 +13,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/checkout', {
   useFindAndModify: false
 });
 const db = mongoose.connection;
-
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
   console.log("Connected to mongodb...");
@@ -30,22 +28,15 @@ const transactionSchema = new Schema({
 });
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
+// Middleware
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
-app.use(cors({ origin: 'http://localhost:8080'}));
 
 
-
-app.get('/', (req, res) => {
-  Transaction.find({}).then(sales => {
-    res.status(200).send(sales);
-  }).catch(err => {
-    res.status(400).send(err);
-  });
-});
-
-app.post('/', (req, res) => {
+// Routes
+app.post('/transactions', (req, res) => {
   var sale = {
     name: req.body.name,
     email: req.body.email,
@@ -59,7 +50,7 @@ app.post('/', (req, res) => {
   });
 });
 
-app.put('/:id', (req, res) => {
+app.put('/transactions/:id', (req, res) => {
   var updates = {};
   for(var p in req.body) {
     updates[p] = req.body[p];
