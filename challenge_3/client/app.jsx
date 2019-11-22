@@ -115,7 +115,25 @@ class App extends React.Component {
     super(props)
     this.state = {
       inProgress: false,
-      form: 0
+      form: 0,
+      acctInfo: {
+        name: '',
+        email: '',
+        password: ''
+      },
+      contactInfo: {
+        line: '',
+        line2: '',
+        city: '',
+        state: '',
+        zip: ''
+      },
+      paymentInfo: {
+        'credit card': '',
+        exp: '',
+        'security code': '',
+        zip: ''
+      }
     };
     this.startCheckout = this.startCheckout.bind(this);
     this.nextForm = this.nextForm.bind(this);

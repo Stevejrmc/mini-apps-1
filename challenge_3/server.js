@@ -24,7 +24,7 @@ const transactionSchema = new Schema({
   email: String,
   password: String,
   address: Schema.Types.Mixed,
-  creditCard: String
+  billing: Schema.Types.Mixed
 });
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
