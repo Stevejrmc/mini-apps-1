@@ -36,14 +36,13 @@ app.use(morgan('dev'));
 
 
 // Routes
-app.post('/transactions', (req, res) => {
+app.post('/transactions/', (req, res) => {
   var sale = {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password
   };
   Transaction.create(sale).then(confirm => {
-    console.log('Confirmation: ', confirm);
     res.status(201).send(confirm._id);
   }).catch(err => {
     res.status(404).end();
@@ -56,7 +55,7 @@ app.put('/transactions/:id', (req, res) => {
     updates[p] = req.body[p];
   }
   Transaction.updateOne({ _id: req.params.id }, updates).then(confirm => {
-    res.status(201).send();
+    res.status(201).send(`updated: ${req.params.id}`);
   }).catch(err => {
     res.status(404).send(err);
   });

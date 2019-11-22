@@ -62,27 +62,27 @@ const ContactInfoForm = ({ handleContact, contactInfo }) => (
 const PaymentForm = ({ handlePayment, paymentInfo }) => (
   <div className="payment-form form-row">
     <div className="form-group col-md-3">
-      <label htmlFor="credit-card">Credit Card</label>
-      <input type="text" value={paymentInfo.creditCard} onChange={e => handlePayment(e)} className="form-control" id="credit-card"/>
+      <label htmlFor="cc">Credit Card</label>
+      <input type="text" value={paymentInfo.creditCard} onChange={e => handlePayment(e)} className="form-control" id="cc"/>
     </div>
     <div className="form-group col-md-2">
-      <label htmlFor="expiration">Expiration</label>
-      <input type="text" value={paymentInfo.exp} onChange={e => handlePayment(e)} className="form-control" id="expiration"/>
+      <label htmlFor="exp">Expiration</label>
+      <input type="text" value={paymentInfo.exp} onChange={e => handlePayment(e)} className="form-control" id="exp"/>
     </div>
     <div className="form-group col-md-2">
       <label htmlFor="cvv">CVV</label>
       <input type="text" value={paymentInfo.securityCode} onChange={e => handlePayment(e)} className="form-control" id="cvv"/>
     </div>
     <div className="form-group col-md-2">
-      <label htmlFor="billing-zip">Billing zip</label>
-      <input type="text" value={paymentInfo.zip} onChange={e => handlePayment(e)} className="form-control" id="billing-zip"/>
+      <label htmlFor="zip">Billing zip</label>
+      <input type="text" value={paymentInfo.zip} onChange={e => handlePayment(e)} className="form-control" id="zip"/>
     </div>
   </div>
 );
 
 const Confirmation = () => (
   <p>
-    It's official we got yo money now! Ha ha. Blah blah blah bacon Lorem ipsum dolor sit amet,
+    It's almost official! Hit PURCHASE!!!! Ha ha. Blah blah blah bacon Lorem ipsum dolor sit amet,
     consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
@@ -121,20 +121,23 @@ class App extends React.Component {
       name: '',
       email: '',
       password: '',
-      line: '',
-      line2: '',
+      address: '',
+      address2: '',
       city: '',
       state: '',
       zip: '',
-      creditCard: '',
+      cc: '',
       exp: '',
-      securityCode: '',
-      zip: ''
+      cvv: '',
+      zip: '',
+      id: ''
     };
     this.startCheckout = this.startCheckout.bind(this);
     this.nextForm = this.nextForm.bind(this);
     this.makePurchase = this.makePurchase.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.updateFormInProgress = this.updateFormInProgress.bind(this);
+    this.alertUser = this.alertUser.bind(this);
   }
   startCheckout() {
     this.setState({
@@ -142,16 +145,88 @@ class App extends React.Component {
     });
   }
 
-  nextForm() {
+  updateFormInProgress() {
     this.setState({
       form: this.state.form + 1
     });
   }
 
+  alertUser() {
+    console.error('Ooops: ', err);
+    alert('There was an error making your request. \n Please try your request again.');
+  }
+
+  nextForm() {
+    const url = 'http://localhost:3000/transactions/';
+    if (this.state.form === 1) {
+      let { name, email, password } = this.state;
+      axios.post(url, {
+        name,
+        email,
+        password
+      }).then(confirm => {
+        console.log('Success: ', confirm);
+        this.setState({
+          form: this.state.form + 1,
+          id: `${confirm.data}`
+        });
+      }).catch(err => {
+        this.alertUser();
+        this.makePurchase();
+      });
+    }
+    if (this.state.form === 2) {
+      let { address, address2, city, state, zip } = this.state;
+      axios.put(url + `${this.state.id}`, {
+        address,
+        address2,
+        city,
+        state,
+        zip
+      }).then(confirm => {
+        this.updateFormInProgress();
+        console.log(confirm);
+      }).catch(err => {
+        this.alertUser();
+      })
+    }
+    if (this.state.form === 3) {
+      let { cc, exp, cvv, zip } = this.state;
+      axios.put(url + `${this.state.id}`, {
+        cc,
+        exp,
+        cvv,
+        zip
+      }).then(confirm => {
+        this.updateFormInProgress();
+        console.log(confirm);
+      }).catch(err => {
+        console.error('Ooops: ', err);
+        alert('There was an error making your request. \n Please try your request again.');
+      });
+    }
+    if (this.state.form < 1) {
+      this.updateFormInProgress();
+    }
+  }
+
   makePurchase() {
     this.setState({
       inProgress: false,
-      form: 0
+      form: 0,
+      name: '',
+      email: '',
+      password: '',
+      address: '',
+      address2: '',
+      city: '',
+      state: '',
+      zip: '',
+      cc: '',
+      exp: '',
+      cvv: '',
+      zip: '',
+      id: ''
     });
   }
 
